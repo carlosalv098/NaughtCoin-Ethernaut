@@ -1,18 +1,31 @@
 const { expect } = require("chai");
+const { ethers, deployments } = require("hardhat");
+const { default: deployNaughtCoin } = require("../deploy/01-deploy-NaughtCoin");
 
-describe("Greeter", function () {
+
+describe("Naught Coin", async() => {
+
+  let naughtCoin;
+
+  beforeEach(async() => {
+    await deployments.fixture(["all"]);
+    naughtCoin = await ethers.getContract("NaughtCoin");
+  })
+
   it("Should return the new greeting once it's changed", async function () {
-    const Greeter = await ethers.getContractFactory("Greeter");
-    const greeter = await Greeter.deploy("Hello, world!");
-    await greeter.deployed();
 
-    expect(await greeter.greet()).to.equal("Hello, world!");
+    const [deployer, user1, user2] = await ethers.getSigners();
+    expect(await naughtCoin.player()).to.equal(user1.address);
 
-    const setGreetingTx = await greeter.setGreeting("Hola, mundo!");
-
-    // wait until the transaction is mined
-    await setGreetingTx.wait();
-
-    expect(await greeter.greet()).to.equal("Hola, mundo!");
   });
 });
+
+
+
+    // install hardhat deploy
+    // create deploy scripts
+    // export them and import here
+    // try hardhat gas reporter
+    // try hardhat solidity-coverage
+    // try hardhat node 
+    // try hardhat console to interact with the smart contract
