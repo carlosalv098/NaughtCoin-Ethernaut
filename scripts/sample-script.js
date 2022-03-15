@@ -1,29 +1,27 @@
-// We require the Hardhat Runtime Environment explicitly here. This is optional
-// but useful for running the script in a standalone fashion through `node <script>`.
-//
-// When running the script with `npx hardhat run <script>` you'll find the Hardhat
-// Runtime Environment's members available in the global scope.
-const hre = require("hardhat");
+
+const { ethers } = require("hardhat");
 
 async function main() {
-  // Hardhat always runs the compile task when running scripts with its command
-  // line interface.
-  //
-  // If this script is run directly using `node` you may want to call compile
-  // manually to make sure everything is compiled
-  // await hre.run('compile');
+  const [user1, user2] = await ethers.getSigners();
 
-  // We get the contract to deploy
-  const Greeter = await hre.ethers.getContractFactory("Greeter");
-  const greeter = await Greeter.deploy("Hello, Hardhat!");
+  const NaughtCoin_Address = '0xC2c3980aa449d5F4Bb5Dbcf67Ac05000d4eE9aCa';
 
-  await greeter.deployed();
+  const NaughtCoin = await ethers.getContractAt("NaughtCoin", NaughtCoin_Address);
 
-  console.log("Greeter deployed to:", greeter.address);
+  console.log(`User1 balance: ${ethers.utils.formatEther(await NaughtCoin.balanceOf(user1.address))}`);
+  console.log(`User2 balance: ${ethers.utils.formatEther(await NaughtCoin.balanceOf(user2.address))}\n`);
+
+  let tx = await NaughtCoin.approve(user2.address, ethers.utils.parseUnits('1000000'));
+  await tx.wait(1);
+
+  tx = await NaughtCoin.connect(user2).transferFrom(user1.address, user2.address, ethers.utils.parseUnits('1000000'));
+  await tx.wait(1);
+
+  
+  console.log(`User1 balance: ${ethers.utils.formatEther(await NaughtCoin.balanceOf(user1.address))}`);
+  console.log(`User2 balance: ${ethers.utils.formatEther(await NaughtCoin.balanceOf(user2.address))}`);
 }
 
-// We recommend this pattern to be able to use async/await everywhere
-// and properly handle errors.
 main()
   .then(() => process.exit(0))
   .catch((error) => {
