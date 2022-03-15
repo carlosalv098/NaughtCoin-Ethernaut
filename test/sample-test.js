@@ -22,10 +22,3 @@ describe("Naught Coin", async() => {
 
 
 
-    // install hardhat deploy
-    // create deploy scripts
-    // export them and import here
-    // try hardhat gas reporter
-    // try hardhat solidity-coverage
-    // try hardhat node 
-    // try hardhat console to interact with the smart contract
